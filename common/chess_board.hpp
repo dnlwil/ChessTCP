@@ -46,7 +46,7 @@ void ChessBoard::draw_board()
 {
     for (unsigned char i = 0u; i < BOARD_SIZE; i++)
     {
-        std::cout << (int)board[i] << " ";
+        std::cout << board[i] << " ";
         if(((i+1) % ROW) == 0u)
             std::cout << std::endl;
     }

@@ -59,7 +59,6 @@ BaseSocket ServerSocket::accept_connection()
     }
     else
     {
-
         std::cout << "Connection accepted." << std::endl;
         return BaseSocket(fd);
     }

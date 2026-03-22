@@ -1,8 +1,6 @@
 #include "common/server_socket.hpp"
 #include "common/connection_handler.hpp"
 #include <cstring>
-#include <array>
-#include <thread>
 
 int main()
 {
@@ -12,10 +10,8 @@ int main()
 
     ServerConnectionHandler handler(std::move(client_socket));
 
-    handler.handle_data_from_client();
-
-    std::cout << "Press ENTER to exit...";
-    std::cin.get();
+    handler.start_communication();
+    handler.handle_data();
 
     return 0;
 }
