@@ -46,8 +46,6 @@ BaseConnectionHandler::BaseConnectionHandler(BaseSocket socket) : socket(std::mo
 
 void BaseConnectionHandler::build_frame(StateMachine state, const std::span<const unsigned char> data)
 {
-    std::cout << "Setting state = " << static_cast<int>(state) << std::endl;
-
     snd_buf.clear();
     snd_buf.reserve(HEADER_SIZE + data.size());
     snd_buf.push_back(static_cast<unsigned char>(state));
@@ -55,19 +53,13 @@ void BaseConnectionHandler::build_frame(StateMachine state, const std::span<cons
     unsigned short length = data.size();
     snd_buf.push_back(length & 0xFF);
     snd_buf.push_back((length >> 8) & 0xFF);
-    std::cout << "----------------------------------------" << std::endl;
-    for (size_t i = 0; i < snd_buf.size(); i++)
-        std::cout << "snd_buf[" << i << "] = " << (int)snd_buf[i] << std::endl;
+
     snd_buf.insert(snd_buf.end(), data.begin(), data.end());
-    std::cout << "----------------------------------------" << std::endl;
-    for (size_t i = 0; i < snd_buf.size(); i++)
-        std::cout << "snd_buf[" << i << "] = " << (int)snd_buf[i] << std::endl;
 }
 
 void BaseConnectionHandler::send_data()
 {
     socket.send_data(snd_buf.data(), snd_buf.size());
-    // std::cout << "Sending " << snd_buf.size() << " bytes\n";
 }
 
 void BaseConnectionHandler::handle_data()
@@ -93,10 +85,7 @@ void BaseConnectionHandler::handle_data()
         }
 
         rcv_buf.insert(rcv_buf.end(), tmp_buf, tmp_buf + bytes);
-        // std::cout << "rcv_buf[0] = " << (int)rcv_buf[0] << std::endl;
-         for(size_t i = 0; i < rcv_buf.size(); i++)
-             std::cout << "rcv_buf[" << i << "] = " << (int)rcv_buf[i] << std::endl;
-        std::cout << "rcv_buf.size() = " << rcv_buf.size() << std::endl;
+
         parse_frame();
     }
 }
@@ -124,7 +113,6 @@ public:
     ServerConnectionHandler(BaseSocket socket);
     ~ServerConnectionHandler() = default;
 
-    //void handle_data_from_client();
     void start_communication();
     void handle_frame(StateMachine state, std::vector<unsigned char> &data) override;
 };
@@ -142,32 +130,18 @@ void ServerConnectionHandler::start_communication()
 
 void ServerConnectionHandler::handle_frame(StateMachine state, std::vector<unsigned char> &data)
 {
-    std::cout << "handle_frame()\n"
-              << "state = " << static_cast<int>(state) << std::endl;
-    //(void *)data.data();
+    std::cout << "handle_frame()\n" << "state = " << static_cast<int>(state) << std::endl;
+    
     switch (state)
     {
-    // case StateMachine::WaitingForMove:
-    // {
-    //     std::array<char, 6> temp_buf{};
-
-    //     std::cout << "Make a move.\n"
-    //               << "Format: <Piece_symbol><Start_square><-><End_square>\n"
-    //               << "Example: Nb1-c3" << std::endl;
-
-    //     std::cin.getline(temp_buf.data(), MOVE_FORMAT_SIZE);
-    //     build_frame(StateMachine::MoveSent, std::span<const unsigned char>(reinterpret_cast<const unsigned char *>(temp_buf.data()), temp_buf.size()));
-    //     send_data();
-    //     break;
-    // }
     case StateMachine::BoardState:
         break;
     case StateMachine::MoveSent:
-        std::cout << "handle_frame(); data.size() = " << data.size() << std::endl;
-        std::cout << "handle_frame(); data.data() = " << data.data() << std::endl; // todo jakies smieci sie tu wyswietlaja
+    {
         build_frame(StateMachine::WaitingForMove);
         send_data();
         break;
+    }
     case StateMachine::Error:
         break;
     default:
@@ -184,9 +158,7 @@ class ClientConnectionHandler : public BaseConnectionHandler
 public:
     ClientConnectionHandler(BaseSocket socket);
     ~ClientConnectionHandler() = default;
-    //void handle_data_from_server();
-    //void get_data_from_server(int x);
-    //void parse_frame();
+
     void handle_frame(StateMachine state, std::vector<unsigned char> &data) override;
 };
 
@@ -197,7 +169,7 @@ ClientConnectionHandler::ClientConnectionHandler(BaseSocket socket) : BaseConnec
 void ClientConnectionHandler::handle_frame(StateMachine state, std::vector<unsigned char> &data)
 {
     std::cout << "handle_frame()\n" << "state = " << static_cast<int>(state) << std::endl;
-    //(void*)data.data();
+
     board.draw_board();
     switch(state)
     {

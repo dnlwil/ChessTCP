@@ -14,8 +14,8 @@ protected:
     int fd;
 
 public:
-    BaseSocket();
-    BaseSocket(int fd);
+    BaseSocket() : fd(-1) {};
+    BaseSocket(int fd) : fd(fd) {};
     BaseSocket(const BaseSocket &) = delete;
     BaseSocket &operator=(const BaseSocket &) = delete;
 
@@ -40,16 +40,6 @@ public:
     ssize_t send_data(const void *buf, size_t len);
     ssize_t receive_data(void *buf, size_t len);
 };
-
-BaseSocket::BaseSocket() : fd(-1)
-{
-
-}
-
-BaseSocket::BaseSocket(int fd) : fd(fd)
-{
-
-}
 
 BaseSocket::~BaseSocket()
 {
