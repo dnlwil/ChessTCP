@@ -1,20 +1,4 @@
-#pragma once 
-
-#include "base_socket.hpp"
-
-class ServerSocket
-{
-private:
-    int listenfd;
-    struct sockaddr_in servaddr{};
-    socklen_t servaddrlen = sizeof(servaddr);
-
-public:
-    ServerSocket();
-    ServerSocket(int port);
-    BaseSocket accept_connection();
-    ~ServerSocket();
-};
+#include "server_socket.hpp"
 
 ServerSocket::ServerSocket() : listenfd(-1)
 {
@@ -28,6 +12,15 @@ ServerSocket::ServerSocket(int port) : listenfd(-1)
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(port);
+}
+
+ServerSocket::~ServerSocket()
+{
+    if (listenfd >= 0)
+    {
+        close(listenfd);
+        std::cout << "Socket closed. (listenfd)\n";
+    }
 }
 
 BaseSocket ServerSocket::accept_connection()
@@ -64,11 +57,3 @@ BaseSocket ServerSocket::accept_connection()
     }
 }
 
-ServerSocket::~ServerSocket()
-{
-    if (listenfd >= 0)
-    {
-        close(listenfd);
-        std::cout << "Socket closed. (listenfd)\n";
-    }
-}

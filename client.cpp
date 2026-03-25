@@ -1,5 +1,5 @@
-#include "common/client_socket.hpp"
-#include "common/connection_handler.hpp"
+#include "common/socket/client_socket.hpp"
+#include "common/connection/client_connection_handler.hpp"
 #include <cstring>
 
 int main()

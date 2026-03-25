@@ -36,26 +36,15 @@ public:
         return *this;
     }
 
-    ~BaseSocket();
+    ~BaseSocket()
+    {
+        if (fd >= 0)
+        {
+            close(fd);
+            std::cout << "Socket closed. (fd)\n";
+        }
+    }
+
     ssize_t send_data(const void *buf, size_t len);
     ssize_t receive_data(void *buf, size_t len);
 };
-
-BaseSocket::~BaseSocket()
-{
-    if (fd >= 0)
-    {
-        close(fd);
-        std::cout << "Socket closed. (fd)\n";
-    }
-}
-
-ssize_t BaseSocket::send_data(const void *buf, size_t len)
-{
-    return send(fd, buf, len, 0);
-}
-
-ssize_t BaseSocket::receive_data(void *buf, size_t len)
-{
-    return recv(fd, buf, len, 0);
-}
